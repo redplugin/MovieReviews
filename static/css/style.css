@@ -1,0 +1,10 @@
+body {
+    background-color: beige;
+    max-width: 700px;
+    margin: auto;
+}
+
+.movie {
+    background-color: blanchedalmond;;
+    margin: 10px 0;
+}

@@ -11,10 +11,19 @@ class Genre(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=255, unique=True)
+    description = models.TextField()
     release_year = models.IntegerField()
     genres = models.ManyToManyField(Genre, related_name="movies")
     # cast/directors?
     # info?
+
+    def average_rating(self):
+        reviews = self.reviews.all()
+        if reviews:
+            total_rating = sum(review.rating for review in reviews)
+            return total_rating / len(reviews)
+        else:
+            return 0
 
     def __str__(self):
         return self.title

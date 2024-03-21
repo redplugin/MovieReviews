@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Movie Reviews | Edit review{% endblock %}
+
+{% block content %}
+    <h2 class="display-2">Edit Review</h2>
+    <h6 class="display-6">to "{{ review.movie.title }}"</h6>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Review</button>
+    </form>
+{% endblock %}

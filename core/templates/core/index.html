@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Movie Reviews | Index{% endblock %}
+
+{% block content %}
+    {% for movie in movies %}
+        <div class="card text-bg-light mt-3 mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ movie.title }}
+                    <span class="text-body-secondary">| {{ movie.release_year }}</span>
+                    {% if movie.average_rating != 0 %}
+                        <span class="text-body-secondary">| ★{{ movie.average_rating }}</span>
+                    <span class="text-body-secondary fs-6">
+                            <!-- Number of reviews. It's plural if there's more than one-->
+                            {% if movie.reviews.count < 1 %}
+                                ({{ movie.reviews.count }} reviews)
+                            {% else %}
+                                ({{ movie.reviews.count }} review)
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                </h5>
+                <h6 class="card-subtitle mb-2 text-body-secondary">
+                    {% for genre in movie.genres.all %}
+                        <span class="badge text-bg-secondary">{{ genre }}</span>
+                    {% endfor %}
+                </h6>
+                <p class="card-text">{{ movie.description }}</p>
+                <a class="card-link" href="{% url 'movie' movie.id %}">view details</a>
+
+                {% if user.is_authenticated %}
+                    <!--if this user hasn't reviewed this movie-->
+                    {% if movie.id not in reviewed_movies %}
+                        <a class="ms-3" href="{% url 'write_review' movie.id %}">add a review</a>
+                    {% endif %}
+                {% else %}
+                    <a class="ms-3" href="">login to write a review</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
