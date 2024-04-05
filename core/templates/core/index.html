@@ -3,6 +3,11 @@
 {% block title %}Movie Reviews | Index{% endblock %}
 
 {% block content %}
+
+    {% if message %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endif %}
+
     {% for movie in movies %}
         <div class="card text-bg-light mt-3 mb-3">
             <div class="card-body">
@@ -29,14 +34,6 @@
                 <p class="card-text">{{ movie.description }}</p>
                 <a class="card-link" href="{% url 'movie' movie.id %}">view details</a>
 
-                {% if user.is_authenticated %}
-                    <!--if this user hasn't reviewed this movie-->
-                    {% if movie.id not in reviewed_movies %}
-                        <a class="ms-3" href="{% url 'write_review' movie.id %}">add a review</a>
-                    {% endif %}
-                {% else %}
-                    <a class="ms-3" href="">login to write a review</a>
-                {% endif %}
             </div>
         </div>
     {% endfor %}

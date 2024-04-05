@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Movie Reviews | Review to {{ review.movie.title }}{% endblock %}
+
+{% block content %}
+    <h6 class="display-6">Review to <a class="link-underline link-underline-opacity-0" href="{% url 'movie' review.movie.id %}">{{ review.movie.title }}</a></h6>
+    <h6 class="display-6">
+        by {{ review.user }}
+        {% if review.user == user %}
+            (you)
+        {% endif %}
+    </h6>
+
+    <br>
+
+    <h5 class="card-title">
+        Rated:
+        {% if review.rating == 1 %}
+            ⭐
+        {% elif review.rating == 2 %}
+            ⭐⭐
+        {% elif review.rating == 3 %}
+            ⭐⭐⭐
+        {% elif review.rating == 4 %}
+            ⭐⭐⭐⭐
+        {% elif review.rating == 5 %}
+            ⭐⭐⭐⭐⭐
+        {% endif %} ({{ review.rating }} of 5)
+    </h5>
+
+    <br>
+
+    <p class="card-text">{{ review.text }}</p>
+    <div>
+        <span class="text-body-secondary">{{ review.created_at|date:'d M Y' }}</span>
+
+        <!--if this review belongs to this user-->
+        {% if user.is_authenticated and review.user_id == user.id %}
+            <a class="card-link ms-2" href="{% url 'edit_review' review.id %}">edit</a>
+        {% endif %}
+
+        <span class="ms-2">Likes: {{ review.likes.count }}</span>
+        <!-- Allow users to toggle the like status -->
+        {% if user.is_authenticated %}
+            <form action="{% url 'toggle_like' review.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="like" class="border border-0 rounded-4">{% if user in review.likes.all %}🧡{% else %}🤍{% endif %}</button>
+            </form>
+        {% endif %}
+
+        <!-- Delete review button -->
+        {% if request.user.is_authenticated %}
+            {% if review.user == request.user %}
+                <form class="d-inline" method="post" action="{% url 'remove_review' review.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="border border-0 rounded-4" title="Delete review">🗑️</button>
+                </form>
+            {% endif %}
+        {% endif %}
+
+<!--        <div>Review liked by:-->
+<!--            {% for user in review.likes.all %}-->
+<!--                <span>{{ user.username }}</span> &lt;!&ndash; Display the usernames of users who liked the review &ndash;&gt;-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+
+    </div>
+
+    {% for message in messages %}
+        <div>{{ message }}</div>
+    {% endfor %}
+    <hr>
+
+
+    <!-- Comment section -->
+    <p class="fs-4">Comments</p>
+    {% if not review.comments.all %}
+        <p>No comments yet</p>
+    {% endif %}
+    {% for comment in review.comments.all %}
+        <div class="card mb-3">
+            <div class="card-header">
+                by {{ comment.user }}
+                {% if comment.user == user %}
+                    (you)
+                {% endif %}
+                <span class="fw-light">{{ comment.created_at|date:'d M Y ' }}</span>
+
+                {% if comment.user == user %}
+                    <form class="float-end" method="post" action="{% url 'remove_comment' comment.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-light btn-sm" title="Delete comment">❌</button>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {{ comment.text }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Comment</button>
+    </form>
+
+
+{% endblock %}
+

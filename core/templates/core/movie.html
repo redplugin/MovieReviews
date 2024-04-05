@@ -68,7 +68,7 @@
                     <p class="card-text">{{ review.text }}</p>
                     <div>
                         <span class="text-body-secondary">{{ review.created_at|date:'d M Y' }}</span>
-                        <a class="card-link ms-2" href="">view details</a>
+                        <a class="card-link ms-2" href="{% url 'review' review.id %}">view details</a>
 
                         <!--if this review belongs to this user-->
                         {% if user.is_authenticated and review.user_id == user.id %}

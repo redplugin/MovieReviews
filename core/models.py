@@ -14,8 +14,6 @@ class Movie(models.Model):
     description = models.TextField()
     release_year = models.IntegerField()
     genres = models.ManyToManyField(Genre, related_name="movies")
-    # cast/directors?
-    # info?
 
     def average_rating(self):
         reviews = self.reviews.all()
@@ -34,8 +32,8 @@ class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="reviews")
     text = models.TextField()
     rating = models.IntegerField(choices=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5)))
-    # !!! make ratings many to many so each movie had ratings according to rates made by users
     likes = models.ManyToManyField(User, related_name='review_likes', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.movie.title} - {self.user.username}"
@@ -45,7 +43,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
-    likes = models.ManyToManyField(User, related_name='comment_likes', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.review.movie.title}"
