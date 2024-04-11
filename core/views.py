@@ -11,12 +11,23 @@ from .models import Genre, Movie, Review, Comment
 
 
 def index(request):
-    # Query to get all movies ordered by the count of reviews in descending order
-    movies = Movie.objects.annotate(num_reviews=Count('reviews')).order_by('-num_reviews')
+    # Get all movies from the database
+    movies = Movie.objects.all()
 
-    return render(request, "core/index.html", {
-        'movies': movies
-    })
+    # Sorting parameters
+    sort_by = request.GET.get('sort_by', 'title')
+    if sort_by not in ['title', '-title', 'release_year', '-release_year', 'reviews', '-reviews']:
+        sort_by = 'title'
+
+    # Sort movies based on parameters
+    movies = movies.order_by(sort_by)
+
+    context = {
+        'movies': movies,
+        'sort_by': sort_by,
+    }
+
+    return render(request, 'core/index.html', context)
 
 
 def movie_search(request):

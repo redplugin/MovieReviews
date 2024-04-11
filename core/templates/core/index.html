@@ -8,6 +8,20 @@
         <div class="alert alert-info">{{ message }}</div>
     {% endif %}
 
+    <!-- Show the sort buttons only on the index page -->
+    {% if sort_by %}
+        <form method="GET">
+            <div class="btn-group mb-3" role="group" aria-label="Sort Movies">
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'title' %}active{% endif %}" name="sort_by" value="title">A-Z</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-title' %}active{% endif %}" name="sort_by" value="-title">Z-A</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'reviews' %}active{% endif %}" name="sort_by" value="reviews">By Reviews 🔽</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-reviews' %}active{% endif %}" name="sort_by" value="-reviews">By Reviews 🔼</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'release_year' %}active{% endif %}" name="sort_by" value="release_year">By Year 🔼</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-release_year' %}active{% endif %}" name="sort_by" value="-release_year">By Year 🔽</button>
+            </div>
+        </form>
+    {% endif %}
+
     {% for movie in movies %}
         <div class="card text-bg-light mt-3 mb-3">
             <div class="card-body">
