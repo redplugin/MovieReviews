@@ -14,6 +14,7 @@ class Movie(models.Model):
     description = models.TextField()
     release_year = models.IntegerField()
     genres = models.ManyToManyField(Genre, related_name="movies")
+    imdb_id = models.CharField(max_length=64, unique=False)
 
     def average_rating(self):
         reviews = self.reviews.all()

@@ -1,3 +1,5 @@
+import requests
+
 from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
@@ -59,9 +61,20 @@ def movie_details(request, movie_id):
     else:
         reviewed_movies = []
 
+    # Make a request to the OMDB API to get the movie details
+    omdb_api_key = 'a98a1cf1'  # my API KEY
+    omdb_url = f'https://www.omdbapi.com/?i={movie.imdb_id}&apikey={omdb_api_key}'
+    response = requests.get(omdb_url)
+    if response.status_code == 200:
+        movie_details = response.json()
+        poster_url = movie_details.get('Poster', '')  # Get the poster URL from the response
+    else:
+        poster_url = ''
+
     return render(request, "core/movie.html", {
         "movie": movie,
         'reviewed_movies': reviewed_movies,
+        'poster_url': poster_url,
     })
 
 

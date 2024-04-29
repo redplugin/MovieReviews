@@ -5,6 +5,10 @@
 {% block content %}
 
     <h2 class="display-2">{{ movie.title }}</h2>
+    <div>
+        <img src="{{ poster_url }}" alt="Movie Poser">
+    </div>
+    <br>
     <p><span class="text-body-secondary">Description: </span>{{ movie.description }}</p>
     <p><span class="text-body-secondary">Release year: </span> {{ movie.release_year }}</p>
     <p><span class="text-body-secondary">Genres:</span>
