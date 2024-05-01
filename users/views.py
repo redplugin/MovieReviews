@@ -4,16 +4,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
-
-# # Create your views here.
-# def index(request):
-#     if not request.user.is_authenticated:
-#         return HttpResponseRedirect(reverse("login"))
-#     return render(request, "users/user.html")
+from .forms import CustomUserCreationForm
 
 
 def login_view(request):
+    message = None
+    stored_messages = messages.get_messages(request)
+    for msg in stored_messages:
+        message = msg  # Retrieve the last message from the session
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -28,7 +27,9 @@ def login_view(request):
                 "message": "Invalid credentials."
             })
 
-    return render(request, "users/login.html")
+    return render(request, "users/login.html", {
+        "message": message,
+    })
 
 
 def logout_view(request):
@@ -42,7 +43,7 @@ def register(request):
     message = None
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')

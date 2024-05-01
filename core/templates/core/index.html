@@ -14,8 +14,8 @@
             <div class="btn-group mb-3" role="group" aria-label="Sort Movies">
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'title' %}active{% endif %}" name="sort_by" value="title">A-Z</button>
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-title' %}active{% endif %}" name="sort_by" value="-title">Z-A</button>
-                <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'reviews' %}active{% endif %}" name="sort_by" value="reviews">By Reviews 🔽</button>
-                <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-reviews' %}active{% endif %}" name="sort_by" value="-reviews">By Reviews 🔼</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-num_reviews' %}active{% endif %}" name="sort_by" value="-num_reviews">By Reviews 🔽</button>
+                <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'num_reviews' %}active{% endif %}" name="sort_by" value="num_reviews">By Reviews 🔼</button>
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'release_year' %}active{% endif %}" name="sort_by" value="release_year">By Year 🔼</button>
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-release_year' %}active{% endif %}" name="sort_by" value="-release_year">By Year 🔽</button>
             </div>

@@ -14,11 +14,11 @@ from .models import Genre, Movie, Review, Comment
 
 def index(request):
     # Get all movies from the database
-    movies = Movie.objects.all()
+    movies = Movie.objects.annotate(num_reviews=Count('reviews'))
 
     # Sorting parameters
     sort_by = request.GET.get('sort_by', 'title')
-    if sort_by not in ['title', '-title', 'release_year', '-release_year', 'reviews', '-reviews']:
+    if sort_by not in ['title', '-title', 'release_year', '-release_year', 'num_reviews', '-num_reviews']:
         sort_by = 'title'
 
     # Sort movies based on parameters
@@ -61,7 +61,7 @@ def movie_details(request, movie_id):
     else:
         reviewed_movies = []
 
-    # Make a request to the OMDB API to get the movie details
+    # request to the OMDB API to get JSON with movie details
     omdb_api_key = 'a98a1cf1'  # my API KEY
     omdb_url = f'https://www.omdbapi.com/?i={movie.imdb_id}&apikey={omdb_api_key}'
     response = requests.get(omdb_url)
@@ -118,8 +118,8 @@ def toggle_like(request, review_id):
 @login_required
 def write_review(request, movie_id):
     if not request.user.is_authenticated:
-        # Redirect non-authenticated users to the login page or display a message
-        return redirect('login')  # Assuming you have a 'login' URL name
+        # Redirect non-authenticated users to the login page
+        return redirect('login')
 
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -152,7 +152,7 @@ def edit_review(request, review_id):
             form.save()
             return redirect('review', review_id=review.pk)
         else:
-            # Render the form again with error messages
+            # Render the form again if the form is not valid
             return render(request, 'core/edit_review.html', {'form': form, 'review': review})
 
     # Return a bad request response for unsupported methods
@@ -175,7 +175,7 @@ def remove_review(request, review_id):
             return render(request, 'core/movie.html', {'review': review})
     else:
         # If the user is not the author, show an error message in the movie template
-        messages.error(request, 'You are not the author of this review.')  # Error message
+        messages.error(request, 'You are not the author of this review.')
         return redirect('movie', movie_id=review.movie.pk)
 
 
