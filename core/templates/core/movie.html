@@ -7,7 +7,9 @@
     <h2 class="display-2">{{ movie.title }}</h2>
 
     <div class="clearfix">
-        <img class="float-md-end" src="{{ poster_url }}" alt="Movie Poser">
+        <div class="float-md-end">
+            <img class="d-inline-block ms-2" src="{{ poster_url }}" alt="Movie Poser">
+        </div>
         <p><span class="text-body-secondary">Description: </span>{{ movie.description }}</p>
         <p><span class="text-body-secondary">Release year: </span> {{ movie.release_year }}</p>
         <p><span class="text-body-secondary">Genres:</span>
