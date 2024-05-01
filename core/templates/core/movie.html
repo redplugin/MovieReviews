@@ -5,28 +5,28 @@
 {% block content %}
 
     <h2 class="display-2">{{ movie.title }}</h2>
-    <div>
-        <img src="{{ poster_url }}" alt="Movie Poser">
-    </div>
-    <br>
-    <p><span class="text-body-secondary">Description: </span>{{ movie.description }}</p>
-    <p><span class="text-body-secondary">Release year: </span> {{ movie.release_year }}</p>
-    <p><span class="text-body-secondary">Genres:</span>
-        {% for genre in movie.genres.all %}
-            <span class="badge text-bg-secondary">{{ genre }}</span>
-        {% endfor %}
-    </p>
 
-    <p><span class="text-body-secondary">Average rating:</span> {{ movie.average_rating }}</p>
+    <div class="clearfix">
+        <img class="float-md-end" src="{{ poster_url }}" alt="Movie Poser">
+        <p><span class="text-body-secondary">Description: </span>{{ movie.description }}</p>
+        <p><span class="text-body-secondary">Release year: </span> {{ movie.release_year }}</p>
+        <p><span class="text-body-secondary">Genres:</span>
+            {% for genre in movie.genres.all %}
+                <span class="badge text-bg-secondary">{{ genre }}</span>
+            {% endfor %}
+        </p>
 
-    {% if user.is_authenticated %}
-        <!--if this user hasn't reviewed this movie-->
-        {% if movie.id not in reviewed_movies %}
-            <a href="{% url 'write_review' movie.id %}">add a review</a>
+        <p><span class="text-body-secondary">Average rating:</span> {{ movie.average_rating }}</p>
+
+        {% if user.is_authenticated %}
+            <!--if this user hasn't reviewed this movie-->
+            {% if movie.id not in reviewed_movies %}
+                <a href="{% url 'write_review' movie.id %}">add a review</a>
+            {% endif %}
+        {% else %}
+            <a href="">login to write a review</a>
         {% endif %}
-    {% else %}
-        <a href="">login to write a review</a>
-    {% endif %}
+    </div>
 
     <hr>
     {% for message in messages %}
