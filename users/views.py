@@ -1,10 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .forms import CustomUserCreationForm
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm, UserUpdateForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User
 
 
 def login_view(request):
@@ -58,3 +61,41 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, 'users/register.html', {'form': form, 'message': message})
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("user_page"))
+    else:
+        form = UserUpdateForm(instance=request.user)
+    return render(request, 'users/update_profile.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+
+            # Update the user's session to reflect the new password
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return HttpResponseRedirect(reverse("user_page"))
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'users/change_password.html', {'form': form})
+
+
+@login_required
+def delete_user(request):
+    if request.method == 'POST':
+        # Delete the user account
+        request.user.delete()
+        messages.success(request, 'Your account has been deleted.')
+        return redirect('index')
+    return render(request, 'users/delete_user.html')
