@@ -9,11 +9,24 @@ class Genre(models.Model):
         return self.name
 
 
+class Director(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    bio = models.TextField(blank=True)
+
+    # GPS coordinates of directors' headquarters stored here
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Movie(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.TextField()
     release_year = models.IntegerField()
     genres = models.ManyToManyField(Genre, related_name="movies")
+    directors = models.ManyToManyField(Director, related_name='movies')
     imdb_id = models.CharField(max_length=64, unique=False)
 
     def average_rating(self):

@@ -9,7 +9,7 @@
     {% endif %}
 
     <!-- Show the sort buttons only on the index page -->
-    {% if sort_by %}
+    {% if sort_by and not director and not genre %}
         <form method="GET">
             <div class="btn-group mb-3" role="group" aria-label="Sort Movies">
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == 'title' %}active{% endif %}" name="sort_by" value="title">A-Z</button>
@@ -20,6 +20,30 @@
                 <button type="submit" class="btn btn-outline-secondary {% if sort_by == '-release_year' %}active{% endif %}" name="sort_by" value="-release_year">By Year 🔽</button>
             </div>
         </form>
+    {% endif %}
+
+    <!--Search results for directors-->
+    {% if directors %}
+        <p>Results by directors:</p>
+        {% for director in directors %}
+            <h3><a href="{% url 'index' %}?director_id={{ director.id }}">{{ director }}</a></h3>
+        {% endfor %}
+    {% endif %}
+
+    <!--Search results for genres-->
+    {% if genres %}
+        <p>Results by genres:</p>
+        {% for genre in genres %}
+            <h3><a href="{% url 'index' %}?genre_id={{ genre.id }}">{{ genre }}</a></h3>
+        {% endfor %}
+    {% endif %}
+
+    {% if director %}
+        <h2>Movies by {{ director }}</h2>
+    {% endif %}
+
+    {% if genre %}
+        <h2>Movies of {{ genre }} genre</h2>
     {% endif %}
 
     {% for movie in movies %}
@@ -40,9 +64,11 @@
                         </span>
                     {% endif %}
                 </h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">
+                <h6 class="card-subtitle mb-2">
                     {% for genre in movie.genres.all %}
-                        <span class="badge text-bg-secondary">{{ genre }}</span>
+                        <span class="badge badge-light">
+                            <a href="{% url 'index' %}?genre_id={{ genre.id }}">{{ genre }}</a>
+                        </span>
                     {% endfor %}
                 </h6>
                 <p class="card-text">{{ movie.description }}</p>
@@ -51,4 +77,36 @@
             </div>
         </div>
     {% endfor %}
+
+    <!-- Leaflet map with location -->
+    {% if director %}
+        <h2>{{ director.name }}'s headquarters</h2>
+
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""/>
+
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+        <div id="map" style="height: 280px;"></div>
+
+        <script>
+            var map = L.map('map').setView([{{ director.latitude }}, {{ director.longitude }}], 13);
+
+            // Add tile layer (e.g., OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add marker for specific coordinates
+            var marker = L.marker([{{ director.latitude }}, {{ director.longitude }}]).addTo(map);
+        </script>
+        <br>
+    {% endif %}
+
 {% endblock %}

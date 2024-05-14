@@ -10,11 +10,21 @@
         <div class="float-md-end">
             <img class="d-inline-block ms-2" src="{{ poster_url }}" alt="Movie Poser">
         </div>
-        <p><span class="text-body-secondary">Description: </span>{{ movie.description }}</p>
+        <p>
+            <span class="text-body-secondary">Director(s): </span> <br>
+            {% for director in movie.directors.all %}
+                <a href="{% url 'index' %}?director_id={{ director.id }}">{{ director }}</a> <br>
+            {% endfor %}
+        </p>
+        <p><span class="text-body-secondary">Description: <br> </span>{{ movie.description }}</p>
         <p><span class="text-body-secondary">Release year: </span> {{ movie.release_year }}</p>
-        <p><span class="text-body-secondary">Genres:</span>
+
+        <p>
+            <span class="text-body-secondary">Genres:</span>
             {% for genre in movie.genres.all %}
-                <span class="badge text-bg-secondary">{{ genre }}</span>
+                <span class="badge badge-light">
+                    <a href="{% url 'index' %}?genre_id={{ genre.id }}">{{ genre }}</a>
+                </span>
             {% endfor %}
         </p>
 

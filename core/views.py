@@ -9,14 +9,28 @@ from django.urls import reverse
 
 from .forms import ReviewForm, CommentForm
 
-from .models import Genre, Movie, Review, Comment
+from .models import Genre, Director, Movie, Review, Comment
 
 
 def index(request):
     # Get all movies from the database
     movies = Movie.objects.annotate(num_reviews=Count('reviews'))
 
-    # Sorting parameters
+    # if director is specified:
+    director_id = request.GET.get('director_id')
+    director = None
+    if director_id:
+        director = Director.objects.get(pk=director_id)
+        movies = movies.filter(directors=director)
+
+    # if genre is specified:
+    genre_id = request.GET.get('genre_id')
+    genre = None
+    if genre_id:
+        genre = Genre.objects.get(pk=genre_id)
+        movies = movies.filter(genres=genre)
+
+    # if sorting parameters
     sort_by = request.GET.get('sort_by', 'title')
     if sort_by not in ['title', '-title', 'release_year', '-release_year', 'num_reviews', '-num_reviews']:
         sort_by = 'title'
@@ -27,8 +41,9 @@ def index(request):
     context = {
         'movies': movies,
         'sort_by': sort_by,
+        'director': director,
+        'genre': genre,
     }
-
     return render(request, 'core/index.html', context)
 
 
@@ -38,13 +53,17 @@ def movie_search(request):
         if query:
             # Perform search based on the query
             movies = Movie.objects.filter(title__icontains=query)
-            if len(movies) > 0:
+            directors = Director.objects.filter(name__icontains=query)
+            genres = Genre.objects.filter(name__icontains=query)
+            if len(movies) > 0 or len(directors) > 0 or len(genres) > 0:
                 message = f"Search results by your \"{query}\" query"
             else:
                 message = f"No search results by your \"{query}\" query"
             return render(request, 'core/index.html', {
                 'message': message,
                 'movies': movies,
+                'directors': directors,
+                'genres': genres,
                 'query': query,
             })
     # If no query or if method is not GET, render the index page without search results
